@@ -44,6 +44,22 @@ userSchema.pre('save', function (next) {
     next()
 })
 
+//making the virtual function
+userSchema.static('matchPassword', async function(email, password){
+    const user = await this.findOne({email});
+    if(!user) throw new Error("User not found!");
+    
+    const salt = user.salt
+    const hashedPassword = user.password;
+
+    const userProvidedHash = createHmac("sha256", salt).update(password).digest("hex");
+   
+    if(hashedPassword !== userProvidedHash) throw Error("Incorrect Password")
+
+
+    return user; 
+})
+
 
 
 const User = model('user', userSchema)
