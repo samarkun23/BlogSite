@@ -1,26 +1,32 @@
 const User = require('../models/user')
 async function signUp(req, res) {
-    const {fullName, email, password} = req.body;
+    const { fullName, email, password } = req.body;
     await User.create({
         fullName,
         email,
         password
     })
-    return res.redirect("/") 
+    return res.redirect("/")
 }
 
 async function signin(req, res) {
-    const {email, password} = req.body;
-    const user = await User.matchPassword(email,password) 
+    try {
+        const { email, password } = req.body;
+        const token = await User.matchPasswordAndGenerateToken(email, password)
 
-    console.log(user);
-    return res.redirect("/") 
+        return res.cookie('token', token).redirect("/")
+    } catch (error) {
+        return res.render('signin',{
+            error: 'Incorrect Email or Password'
+        })
+
+    }
 
 }
 
 
 
-module.exports = {signUp,signin} ;
+module.exports = { signUp, signin };
 
 
 
