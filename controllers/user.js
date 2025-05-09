@@ -24,9 +24,12 @@ async function signin(req, res) {
 
 }
 
+async function logout(req, res) {
+    res.clearCookie('token').redirect("/"); 
+}
 
 
-module.exports = { signUp, signin };
+module.exports = { signUp, signin, logout };
 
 
 
